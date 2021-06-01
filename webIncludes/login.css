@@ -1,0 +1,329 @@
+
+ 
+
+a{
+    text-decoration: none;
+}
+.no-padding{
+    padding: 0 !important;
+}
+.selectable{
+    user-select: text;
+}
+.img-link{
+    position: relative;
+    width: 15px;
+    height: 15px;
+    margin: 0 4px;
+    overflow: visible;
+}
+.img-link:after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: url(/images/external-link.svg);
+    background-size: cover;
+}
+.img-link.disabled{
+    filter: grayscale(1);
+}
+.img-link:after {
+    transition: transform 0.2s ease 0s;
+}
+.img-link:before {
+    content: " ";
+    position: absolute;
+    display: block;
+    width: 0px;
+    height: 0px;
+    margin-left: 0px;
+    margin-top: 0px;
+    background: #e6efff ;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    transition: all 0.2s ease 0s;
+}
+.img-link:hover:before {
+    width: 28px;
+    height: 28px;
+    margin-left: -14px;
+    margin-top: -14px;
+}
+.img-link:hover:after {
+    transform: scale(1.2)
+}
+.img-link.disabled:before {
+    content: none;
+    display: none;
+}
+.img-link.disabled:hover:after {
+    transform: none;
+}
+
+
+/*preloaders*/
+.preloader {
+    background: rgba(255,255,255,.6);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    opacity: 0;
+    top: 0px;
+    left: 0px;
+    width: 0%;
+    height: 0%;
+    z-index: 1;
+    /*-webkit-transition: opacity .5s ease-in-out 0.5s, width 0s linear 0.75s, height 0s linear 0.75s;
+    transition: opacity .5s ease-in-out 0.5s, width 0s linear 0.75s, height 0s linear 0.75s;*/
+}
+
+
+
+    .preloader.shown {
+        opacity: 1;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        /*-webkit-transition: opacity .5s ease-in-out 0s;
+        transition: opacity .5s ease-in-out 0s;*/
+    }
+
+        .preloader.shown.success,
+        .preloader.shown.failed {
+            -webkit-transition: opacity 0s ease-in-out 0s;
+            transition: opacity 0s ease-in-out 0s;
+        }
+
+
+    .preloader .indicator {
+        display: block;
+        position: absolute;
+        max-width: 300px;
+        width: 100%;
+        height: 100%;
+        padding: 15px;
+        box-sizing: border-box;
+        opacity: 0;
+        -webkit-transition: opacity 0s ease-in-out 0.75s;
+        transition: opacity 0s ease-in-out
+    }
+    .preloader.shown .indicator {
+        -webkit-transition: opacity .4s ease-in-out 0s;
+        transition: opacity .4s ease-in-out 0s;
+    }
+
+    .preloader.shown.timeout .check,
+    .preloader.shown.success .check,
+    .preloader.shown.process .wait,
+    .preloader.shown.failed .fail {
+        opacity: 1;
+    }
+
+    .preloader .check .check-circle,
+    .preloader .fail .fail-circle {
+        stroke-dasharray: 314;
+        stroke-dashoffset: 314;
+        stroke-width: 4;
+        -webkit-transition: stroke-dashoffset 0s ease-in-out 0.75s;
+        transition: stroke-dashoffset 0s ease-in-out 0.75s;
+    }
+    .preloader.shown .check .check-circle,
+    .preloader.shown .fail .fail-circle {
+        -webkit-transition: stroke-dashoffset 0.75s ease-in-out 0s;
+        transition: stroke-dashoffset 0.75s ease-in-out 0s;
+    }
+
+    .preloader .check .check-check {
+        stroke-dasharray: 76;
+        stroke-dashoffset: 76;
+        stroke-width: 4;
+        -webkit-transition: stroke-dashoffset 0s ease-in-out 0.75s;
+        transition: stroke-dashoffset 0s ease-in-out 0.75s;
+    }
+    .preloader.shown .check .check-check {
+        -webkit-transition: stroke-dashoffset 0.75s ease-in-out 0s;
+        transition: stroke-dashoffset 0.75s ease-in-out 0s;
+    }
+
+    .preloader .fail .fail-l-line,
+    .preloader .fail .fail-r-line {
+        stroke-dasharray: 71;
+        stroke-dashoffset: 71;
+        stroke-width: 4;
+    }
+
+    .preloader .fail .fail-l-line {
+        -webkit-transition: stroke-dashoffset 0s ease-in-out 0.75s;
+        transition: stroke-dashoffset 0s ease-in-out 0.75s;
+    }
+    .preloader.shown .fail .fail-l-line {
+        -webkit-transition: stroke-dashoffset 0.325s ease-in-out 0s;
+        transition: stroke-dashoffset 0.325s ease-in-out 0s;
+    }
+    .preloader .fail .fail-r-line {
+        -webkit-transition: stroke-dashoffset 0s ease-in-out 0.75s;
+        transition: stroke-dashoffset 0s ease-in-out 0.75s;
+    }
+    .preloader.shown .fail .fail-r-line {
+        -webkit-transition: stroke-dashoffset 0.325s ease-in-out 0.325s;
+        transition: stroke-dashoffset 0.325s ease-in-out 0.325s;
+    }
+
+	.preloader.timeout .fail .fail-circle,
+    .preloader.timeout .fail .fail-l-line,
+    .preloader.timeout .fail .fail-r-line,
+	
+	
+    .preloader.failed .fail .fail-circle,
+    .preloader.failed .fail .fail-l-line,
+    .preloader.failed .fail .fail-r-line,
+    .preloader.success .check .check-circle,
+    .preloader.success .check .check-check {
+        stroke-dashoffset: 0;
+    }
+
+ /* logo */
+
+.logo {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: auto;
+    margin-bottom: 1.2em;
+    font-size: 80px;
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+}
+ 
+ 
+            
+
+    .logo .logo-text {
+        position: absolute;
+        top: 100%;
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        font-size: 80px;
+        line-height: 80px;
+        /**/
+        -webkit-animation-fill-mode: forwards;
+        -webkit-animation-duration: 2s;
+        -webkit-animation-timing-function: ease;
+        -webkit-animation-name: text;
+        /**/
+        animation-fill-mode: forwards;
+        animation-duration: 2s;
+        animation-timing-function: ease;
+        animation-name: text;
+    }
+ 
+.welcome-page {
+    background-color: #fff;
+    box-sizing: border-box;
+    padding-top: 20px;
+}
+.welcome-page .page-content{
+    position: relative;
+    top: 15%;
+}
+
+.welcome-login {
+    text-align: center;
+}
+    .welcome-login .sign-in-btn {
+		cursor:pointer;
+        display: inline-block;
+        min-width: 300px;
+        font-size: 30px;
+        opacity: 0;
+        outline: none;
+        text-decoration: none;
+        /**/
+        -webkit-animation-name: welcome;
+        -webkit-animation-duration: 1s;
+        -webkit-animation-delay: 1s;
+        -webkit-animation-fill-mode: forwards;
+        /**/
+        animation-name: welcome;
+        animation-duration: 0.5s;
+        animation-delay: 1s;
+        animation-fill-mode: forwards;
+    }
+    .welcome-footer{
+        position: fixed;
+        bottom: 0px;
+        left: 0px;
+        width: 100%;
+        border-top: 2px solid #18a7c6;
+        background-color: #eeeeee;
+        text-align: center;
+        font-size: 18px;
+    }
+
+	
+
+
+	
+
+
+
+@-webkit-keyframes text {
+    0% {
+        -webkit-transform: rotateX(90deg) translateY(40px);
+        transform: rotateX(90deg) translateY(40px);
+        opacity: 0;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: rotateX(0deg) translateY(0px);
+        transform: rotateX(0deg) translateY(0px);
+    }
+}
+@keyframes text {
+    0% {
+        transform: rotateX(90deg) translateY(100px);
+        opacity: 0;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotateX(0deg) translateY(0px);
+    }
+}
+@-webkit-keyframes welcome {
+    0% {
+        -webkit-transform: scale(2);
+        transform: scale(2);
+        opacity: 0;
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+@keyframes welcome {
+    0% {
+        transform:scale(2);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

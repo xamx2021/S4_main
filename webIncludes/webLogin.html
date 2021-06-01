@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/login.css" />
+    <title>S4</title> 
+  
+<!--   
+<script type="text/javascript" src="./Three.js"></script>
+-->	
+	
+<!--	
+<script src="/jquery.min.js"></script>
+<script src="/jquery-ui.min.js"></script>
+-->
+
+</head>
+<body class="welcome-page">
+
+
+    <div class="page-content " id="hidden_w">
+        <div class="logo"> <img src = "/images/testLogo.png"></img><br><br>
+            <div class="logo-3d">               
+            </div>
+            <div class="logo-text">
+                S4
+            </div>
+        </div>
+
+
+        <div class="welcome-login">
+            <a onclick="login('show_login_form')" class="dt-button sign-in-btn">     Sign in       </a>			
+        </div>
+    </div>
+	
+	<!--	 <canvas id="logoCanvas"  ></canvas>	-->			
+    <div class="welcome-footer">     --     </div>
+	
+	<script>			
+		 function login( Code )
+				{
+					var request = new XMLHttpRequest();
+					request.open("POST", './', true);	
+					request.setRequestHeader(Code, "true");
+					request.onreadystatechange  = function (){	   	window.location.href = './'; 	};
+					//request.onreadystatechange  = function (){	   setTimeout( function(){ 	window.location.href = './';}, 500); 	};
+					request.send();
+				} 
+	</script>
+	
+	</body>
+</html>

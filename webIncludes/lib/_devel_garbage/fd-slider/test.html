@@ -1,0 +1,193 @@
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Input Range with Dynamic Label</title>
+</head>
+
+
+<style>
+
+input[type=range] {
+  -webkit-appearance: none;
+  margin: 20px 0;
+  width: 100%;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: #03a9f4;
+  border-radius: 25px;
+}
+input[type=range]::-webkit-slider-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 4px 0 rgba(0,0,0, 1);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -8px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #03a9f4;
+}
+.range-wrap{
+  width: 500px;
+  position: relative;
+}
+.range-value{
+  position: absolute;
+  top: -50%;
+}
+.range-value span{
+  width: 30px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  background: #03a9f4;
+  color: #fff;
+  font-size: 12px;
+  display: block;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  border-radius: 6px;
+}
+.range-value span:before{
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 10px solid #03a9f4;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  margin-top: -1px;
+}
+
+
+</style>
+
+
+<script>
+
+
+
+
+var outerWrapper;
+
+function tt_Init(e)
+{
+	if(outerWrapper) return;
+
+	outerWrapper              = document.createElement('span');
+//	outerWrapper.className    = "fd-slider" + (vertical ? "-vertical " : " ") + (!html5Shim ? " fd-slider-no-value " : "") + classNames;
+//	outerWrapper.id           = "fd-slider-" +0;
+
+	var inpHeight = 20;
+	outerWrapper.style.height = inpHeight + "px";  
+
+
+	//handle.appendChild(document.createTextNode(String.fromCharCode(160)));        
+
+	console.log('created');
+}
+
+
+
+ 
+
+//=======================
+function compUdp_oninput (id)	
+						{
+							// 1. update indicator
+							var e =  document.getElementById(id);
+							var indicator = e.getAttribute('indicator');
+						//	document.getElementById(indicator).innerText = e.value;							//console.log('on oninput', id);
+
+						}
+						
+						
+//=======================
+function compUdp_onchange (id)	
+						{												
+							var data = {};
+							var e =  document.getElementById(id);													//console.log('on onchange' , id);
+							// 2. send value to server:
+							var APIcmd = e.getAttribute('command');
+							var APIparam = e.getAttribute('parameter');						
+
+							var APIobject = e.getAttribute('sendObject');
+							if(APIobject) data = APIobject;
+
+							if(!APIparam)data = e.value; 
+							else data[APIparam] = e.value;
+					
+						}
+
+
+</script>
+
+
+
+
+<body>
+<br>
+<br>
+<br>
+<br>
+  <div class="range-wrap">
+    <div class="range-value" id="rangeV"></div>
+    <input id="range" type="range" min="200" max="800" value="200" step="1">
+  </div>
+</body>
+
+
+
+
+
+
+<script>
+
+const
+  range = document.getElementById('range'),
+  rangeV = document.getElementById('rangeV'),
+  setValue = ()=>{
+    const
+		newValue = Number( (range.value - range.min) * 100 / (range.max - range.min) ),
+		newPosition = 10 - (newValue * 0.2);
+		rangeV.innerHTML = `<span>${range.value}</span>`;
+		rangeV.style.left = `calc(${newValue}% + (${newPosition}px))`;
+  };
+document.addEventListener("DOMContentLoaded", setValue);
+range.addEventListener('input', setValue);
+
+
+</script>
+
+
+
+
+
+</html>
+

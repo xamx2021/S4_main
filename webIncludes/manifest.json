@@ -1,0 +1,19 @@
+{
+  "short_name": "S4",
+  "name": "S4 interface",
+  "description": "S4 Progressive Web Application",
+  "icons": [
+  
+    {
+      "src": "favicon_144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+	
+  ],
+  "start_url": "./webIndex.html", 
+  "display": "standalone",
+  "orientation": "landscape",
+  "theme_color": "#18a7c6",
+  "background_color": "#30d370"
+}

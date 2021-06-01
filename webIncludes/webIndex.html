@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+	 <!-- Progressive application manifes
+	<link rel="manifest" href="/webmanifest.json">t -->
+	<!--    <link rel="manifest" href="./manifest.json">   -->
+    <link rel="icon" sizes="192x192" href="/favicon.ico">
+	
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>S4:</title>       
+	<!-- preloader -->
+	<style> 
+		html, body {	height: 100%;		}
+	</style>
+	<div   id="preloader_p" style="  height: 100vh;  width: 100vw;"> 	
+		<center> Loading... </center><br>
+		<img src = "/images/Loader.gif" style="display: block;  margin-left: auto;  margin-right: auto;  width: 50%;"></img>
+	</div> 	
+	<script>	
+		window.onload = function() {			preloader_p.remove();			document.body.removeAttribute('hidden');			};
+	</script>
+	<!-- end of preloader -->
+
+ 
+	<!-- TEMP, Should be in module spec. BEGIN-->
+	<!-- <script src="/lib/plotly/plotly-latest.min.js"></script>	-->					
+	<!--	<script src="/lib/canvasjs/cracked.canvasjs.min.js"></script>	-->
+	<!-- TEMP, Should be in module spec. END -->	
+	
+	
+	<script src="/lib/jquery.min.js"></script>
+	<script src="/lib/jquery-ui.min.js"></script>
+	<script src="/lib/rws.js"></script>
+	<!-- <script src="/lib/jquery.csv.min.js"></script> -->
+	<script src="/lib/bootstrap.min.js"></script><!-- Needed for modal confirm dlg. -->
+	<script src="/lib/bootstrap-dialog.min.js"></script>	 
+	<script src="/lib/crypto-js/aes.js"></script>
+	<script>
+			var iv = CryptoJS.enc.Hex.parse('be410fea41df7162a679875ec131cf21');
+	</script>
+	  <script src="/theme_css_loader.js"></script>
+
+	 
+</head> 
+ 
+ 
+ 
+ 
+ 
+<body hidden>
+
+
+
+<span hidden id="S4_session_iv" value='%*S4_session_iv_value_*%'></span>
+<span hidden id="S4_session_token" value='%*S4_session_token_value_*%'></span>
+<span hidden id="S4_session_AES_key" value='%*S4_session_AES_key_value_*%'></span>
+<span hidden id="S4_api_port" value='%*S4_api_port_value_*%'></span>
+<span hidden id="S4_api_wss_ws" value='%*S4_api_wss_ws_value_*%'></span>
+
+	
+	
+	
+	
+	
+<!-- micro FWBH -->
+
+<!--
+<style> 
+	.canvasjs-chart-container {			 background-color:  rgba(255, 255, 0, 1.5);  					}
+	.canvasjs-chart-canvas {	 			}
+	.canvasjs-chart-toolbar {			 background-color:  rgba(255, 255, 0, 1.5);  					}
+	.canvasjs-chart-tooltip {			 background-color:  rgba(255, 255, 0, 1.5);  					}
+	.visualizer {			 background-color:  rgba(255, 255, 0, 1.5);  					}
+</style>            
+-->
+
+
+<!-- ====[ Loading indicator ]======================== -->
+<!--
+<style>
+#apiProgress {
+  width: 100%;
+  background-color: #ddd;  
+}
+
+#apiBar {
+  width: 1%;
+  height: 30px;
+  background-color: #4DBF10;
+   z-index: 100;
+}
+</style>
+
+
+ <div id="apiBar"></div>	
+
+<style>
+	body {    overflow:hidden;		}
+	#loading {   width: 100%;   height: 100%;   top: 0;   left: 0;   position: fixed;   display: block;   background-color: #ababab;   z-index: 99;	}
+</style>
+ 
+<script>
+    $(document).on('__on_api_connected', function (o, data) {   $('#loading').hide();		 });
+</script>  
+-->
+<div  hidden id="apiProgress"></div> 
+
+
+
+  
+<!-- Plugins BEGIN  -->
+<style>
+  .ui-tabs-vertical { width: 55em; }
+  .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
+  .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+  .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+  .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
+  //////;.ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+</style>
+  
+  
+<script>
+  $( function() 
+  {  
+      $( "#tabs" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+      //$( "#tabs li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );	
+      $( "#tabs" ).tabs().css( "width", "auto" );	
+  } );
+</script>  
+
+
+
+ 
+		
+<!--
+<div id="tabs"  >
+<ul>
+	 <li id="tabsLogo"  > <img src="/images/testLogo.png" class="menu-logo-image"> </img></li>
+	%*menu*%
+</ul>
+%*tabcontent*%
+</div>
+-->	
+%*tabmenucontent*%
+	
+	
+<div id="connection" data-hint="Connection status"><div></div></div>
+
+
+<script src="/micro_FWBH.js"></script>
+
+
+<!-------[ Restore last opened tab --------------------->
+<script>
+	var lastActive = localStorage.getItem("lastActive") ;// || 0
+	if( !lastActive ) lastActive = 0;
+	$(function() {		$( "#tabs" ).tabs({ active: lastActive, activate: on_tab_select });		});
+	on_tab_select = function( event, ui ) {		var currentActive = $( "#tabs" ).tabs( "option", "active" );  localStorage.setItem("lastActive", currentActive);		};
+</script>
+
+
+
+
+<!-----[ load/save component states ]----------------------------------->
+<script>       	
+        // Save checkbox staates:
+        function cb_save(id_f)
+			{
+                if(id_f)       localStorage.setItem(id_f, document.getElementById(id_f).checked);
+				checkboxes = document.querySelectorAll('input[type=checkbox]');
+				for (i = 0; i < checkboxes.length; i++)
+					{
+						localStorage.setItem(checkboxes[i].id, checkboxes[i].checked);
+						window[checkboxes[i].id] = checkboxes[i].checked;
+					}				
+			}
+			
+        // Load saved checkbox states:
+        function load_component_states_Function()
+		{
+       // unused();
+            checkboxes = document.querySelectorAll('input[type=checkbox]');
+			for (var i = 0; i < checkboxes.length; i++)	
+				{
+					window[checkboxes[i].id] = checkboxes[i].checked = (localStorage.getItem(checkboxes[i].id) === 'true');
+				}
+        }
+		var checkboxes = [];	
+        $(document).ready(load_component_states_Function);		
+</script>
+
+		
+		<!-------------------------[ Some common functions used in modules ]------------------------------------------>
+		
+<script>
+							function convertArrayOfObjectsToCSV(args) 
+								{  
+									var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+									function mkArray(data)
+									{										
+										if (data == null || !data.length) {		return null;	}									
+										columnDelimiter = args.columnDelimiter || ',';
+										lineDelimiter = args.lineDelimiter || '\n';
+										keys = Object.keys(data[0]);
+										result = '' + keys.join(columnDelimiter);
+										result += lineDelimiter;
+										data.forEach(function(item) 
+										{
+											ctr = 0;	keys.forEach(function(key) {	if (ctr > 0) result += columnDelimiter;	result += item[key];		ctr++;		});
+											result += lineDelimiter;
+										});
+									}
+									
+									for(var i in args.data )	mkArray( args.data[i] );
+
+									return result;
+								}
+								
+							function downloadCSV(data, args) 
+								{  
+									var data, filename, link;
+									var csv = convertArrayOfObjectsToCSV({		data: data			});
+									if (csv == null) return;
+									filename = args.filename || 'export.csv';
+									if (!csv.match(/^data:text\/csv/i)) {		csv = 'data:text/csv;charset=utf-8,' + csv;		}
+									data = encodeURI(csv);
+									link = document.createElement('a');
+									link.setAttribute('href', data);
+									link.setAttribute('download', filename);
+									link.click();
+								}
+								
+								
+
+						function objectRenameKey (object, key, newKey)
+							{
+							
+							console.log( object);
+								//	const clonedObj = clone(object);
+								//	const targetKey = clonedObj[key];
+								//	delete clonedObj[key];
+							//		clonedObj[newKey] = targetKey;
+							//	return clonedObj;
+							}
+ 					
+					
+					
+					
+					//uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu  Testing OFFLINE service worker. It's not so useful...
+					
+
+					/*
+										// register the service worker if available
+					if ('serviceWorker' in navigator) {
+						navigator.serviceWorker.register('./sw.js').then(function(reg) {
+							console.log('Successfully registered service worker', reg);
+						}).catch(function(err) {
+							console.warn('Error whilst registering service worker', err);
+						});
+					}
+
+					window.addEventListener('online', function(e) {
+						// re-sync data with server
+						console.log("You are online");
+					   // Page.hideOfflineWarning();
+					   // Arrivals.loadData();
+					}, false);
+
+					window.addEventListener('offline', function(e) {
+						// queue up events for server
+						console.log("You are offline");
+					   // Page.showOfflineWarning();
+					}, false);
+
+					// check if the user is connected
+					//if (navigator.onLine)     Arrivals.loadData();
+					//else  							   Page.showOfflineWarning();    // show offline message
+
+										
+						*/				
+					
+</script>		
+			
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+</body>
+	
+</html>
+
+
+<!--
+
+<script src="lib/html_js_tools/html-inspector.js"></script>
+<script>
+iHTMLInspector.inspect(["unused-classes"]);
+</script>		
+
+-->

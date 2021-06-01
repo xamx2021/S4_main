@@ -1,0 +1,33 @@
+  {
+   //     "version": "0.2.0",
+        "configurations": [
+
+     {			
+						"type": "node",
+						//"debug.javascript.usePreview": false,
+						"request": "launch",
+						"name": "Launch Program",
+						"program": "${workspaceFolder}/main.js"
+				//		"program": "${workspaceFolder}/webserverStandalone.js"	
+			},
+			
+ 
+ 
+
+	/*		  {
+				"type": "node",
+				"request": "attach",
+				"name": "Attach to remote Program",
+ 		//		"preLaunchTask": "preLaunchTask",
+				//"preLaunchTask": "D:\\_Win_Programs\\_NETTOOLS\\Rsync\\plink.exe -ssh 192.168.33.72 -l root -pw Jl3034m!302-304dsf   \"killall node && node --inspectt-brk=192.168.33.72:9229 /_PRO/ESP_S4_new/start.js\"  ",
+				"address": "192.168.33.72",
+				"port": "9229",
+			    "localRoot": "${workspaceFolder}",
+				"remoteRoot": "\\\\192.168.33.72\\_PRO\\ESP_S4_newr",
+				//"Browser": "node.js/v7.5.0", 
+				//"Protocol-Version": "1.1",
+				"protocol": "inspector",
+			  }
+		*/
+        ]
+    }
