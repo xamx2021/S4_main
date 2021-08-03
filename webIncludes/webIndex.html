@@ -10,18 +10,18 @@
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>S4:</title>       
-	<!-- preloader -->
+	<!-- Page Loading logo preloader -->
 	<style> 
 		html, body {	height: 100%;		}
 	</style>
 	<div   id="preloader_p" style="  height: 100vh;  width: 100vw;"> 	
 		<center> Loading... </center><br>
 		<img src = "/images/Loader.gif" style="display: block;  margin-left: auto;  margin-right: auto;  width: 50%;"></img>
-	</div> 	
+	</div>	
 	<script>	
 		window.onload = function() {			preloader_p.remove();			document.body.removeAttribute('hidden');			};
 	</script>
-	<!-- end of preloader -->
+	<!-- end of Page Loading logo preloader -->
 
  
 	<!-- TEMP, Should be in module spec. BEGIN-->
@@ -30,18 +30,61 @@
 	<!-- TEMP, Should be in module spec. END -->	
 	
 	
+
+		
+	
 	<script src="/lib/jquery.min.js"></script>
 	<script src="/lib/jquery-ui.min.js"></script>
 	<script src="/lib/rws.js"></script>
-	<!-- <script src="/lib/jquery.csv.min.js"></script> -->
-	<script src="/lib/bootstrap.min.js"></script><!-- Needed for modal confirm dlg. -->
+	<script src="/lib/jquery.csv.min.js"></script> 	<!--  Used for row inporting csv files to datatables -->
+	<script src="/lib/bootstrap.min.js"></script><!-- Needed for modal dialogs, including confinrm & 'alert' -->
+	
 	<script src="/lib/bootstrap-dialog.min.js"></script>	 
 	<script src="/lib/crypto-js/aes.js"></script>
 	<script>
 			var iv = CryptoJS.enc.Hex.parse('be410fea41df7162a679875ec131cf21');
 	</script>
 	  <script src="/theme_css_loader.js"></script>
+	  
+<script src="/lib/dataTables.min.js"></script>
+	  
+	  
+	  
 
+<script src="/lib_ams/ui_base_a_def.js"></script>
+<script src="/lib_ams/ui_base_a_FWBH.js"></script>
+<script src="/lib_ams/ui_ddd_dialog_table.js"></script> <!--  Нужно почистить от шлака, в этом файле содержитс многго мусора-->
+<script src="/lib_ams/ui_base_form_constructor.js"></script>
+<script src="/lib_ams/ui_base_table_constructor.js"></script>
+<script src="/lib_ams/ui_base_bulk_constructor.js"></script>
+<script src="/lib_ams/UI_S4_chart_constructor.js"></script>
+<script src="/lib_ams/UI_S4_dialogs.js"></script>
+
+ 
+ 
+ 
+	
+<script src="/lib/bootstrap.min.js"></script>
+<script src="/lib/bootstrap-dialog.min.js"></script>			<!--		<link type="text/css" rel="stylesheet" href="/themes/dark-hive/bootstrap-dialog.min.css" />-->
+<script src="/lib/dataTables.min.js"></script> 				<!--	<link type="text/css" rel="stylesheet" href="/themes/dark-hive/dataTables.css"/>		-->
+<script src="/lib/dataTables.colReorder.min.js" ></script>
+<script src="/lib/dataTables.select.min.js" ></script>
+<script src="/lib/dataTables.buttons.min.js" ></script>
+<!--
+--><script src="/lib/dataTables.cellEdit.js" ></script>
+<script src="/lib/buttons.colVis.min.js" ></script>	<!--		<link type="text/css" rel="stylesheet" href="/themes/dark-hive/buttons.dataTables.min.css"/>		-->
+<script src="/lib/buttons.flash.min.js" ></script>
+<script src="/lib/buttons.html5.min.js" ></script>
+<script src="/lib/buttons.print.min.js" ></script>
+
+
+
+<script src="/lib/dataTables.csv2table-0.02-b-4.8.js" ></script>
+ 
+<script src="/lib/dataTables.responsive.min.js" ></script>
+<!--script src="/lib/dataTables.altEditor.free.js" ></script-->
+ 
+	
 	 
 </head> 
  
@@ -77,49 +120,8 @@
 -->
 
 
-<!-- ====[ Loading indicator ]======================== -->
-<!--
-<style>
-#apiProgress {
-  width: 100%;
-  background-color: #ddd;  
-}
 
-#apiBar {
-  width: 1%;
-  height: 30px;
-  background-color: #4DBF10;
-   z-index: 100;
-}
-</style>
-
-
- <div id="apiBar"></div>	
-
-<style>
-	body {    overflow:hidden;		}
-	#loading {   width: 100%;   height: 100%;   top: 0;   left: 0;   position: fixed;   display: block;   background-color: #ababab;   z-index: 99;	}
-</style>
  
-<script>
-    $(document).on('__on_api_connected', function (o, data) {   $('#loading').hide();		 });
-</script>  
--->
-<div  hidden id="apiProgress"></div> 
-
-
-
-  
-<!-- Plugins BEGIN  -->
-<style>
-  .ui-tabs-vertical { width: 55em; }
-  .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
-  .ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
-  .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
-  .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
-  //////;.ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
-</style>
-  
   
 <script>
   $( function() 
@@ -137,7 +139,7 @@
 <!--
 <div id="tabs"  >
 <ul>
-	 <li id="tabsLogo"  > <img src="/images/testLogo.png" class="menu-logo-image"> </img></li>
+	 <li id="tabsLogo"  > <img src="/images/testLogo.png" class="menu-logo-image        "> </img></li>
 	%*menu*%
 </ul>
 %*tabcontent*%
@@ -159,6 +161,24 @@
 	$(function() {		$( "#tabs" ).tabs({ active: lastActive, activate: on_tab_select });		});
 	on_tab_select = function( event, ui ) {		var currentActive = $( "#tabs" ).tabs( "option", "active" );  localStorage.setItem("lastActive", currentActive);		};
 </script>
+
+ <!--  AMS
+ <script>
+        $(document).on("__on_api_connected", function () {
+            var lastActive = localStorage.getItem("lastActive") || "home";
+
+            var tab = $('[data-menu-tab="main"][data-tab-name="' + lastActive + '"]');
+
+            if (tab.length == 0)
+                $('[data-menu-tab="main"][data-tab-name="home"]').trigger('activated')
+            else tab.trigger('activated');
+
+            $('[data-menu-tab="main"]').on('activated', function () {
+                localStorage.setItem("lastActive", $(this).attr('data-tab-name'));
+            })
+        });
+    </script>
+-->
 
 
 
@@ -287,9 +307,72 @@
 		
 		
 		
+
+		<div id="common-preloader" class="preloader">		<!--	-->		
+		
+		
+        <svg xmlns="http://www.w3.org/2000/svg" class="indicator wait" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 100 100">
+            <circle class="wait-circle" cx="50" cy="50" fill="none" r="49" stroke="#6bbbff" stroke-width="2" transform="rotate(48 50 50)">
+                <animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 50;180 50 50;720 50 50" keyTimes="0;0.5;1" dur="2s" begin="0s" repeatCount="indefinite"></animateTransform>
+                <animate attributeName="stroke-dasharray" calcMode="linear" values="0 314.49555921538757;314.4955592153876 -2.842170943040401e-14;0 314.49555921538757" keyTimes="0;0.5;1" dur="2" begin="0s" repeatCount="indefinite"></animate>
+            </circle>
+        </svg>
+        <svg version="1.1" class="indicator check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" viewPort="100px 100px">
+            <circle class="check-circle" fill="none" stroke="#73AF55" stroke-miterlimit="10" cx="50" cy="50" r="48">
+                
+            </circle>
+            <polyline class="check-check" fill="none" stroke="#73AF55" stroke-dashoffset="0" stroke-dasharray="76" stroke-width="4" stroke-miterlimit="10" points="27.8,51.5 45.5,67.8 80.2,30.2"> 
+            </polyline>
+        </svg>
+        <svg version="1.1" class="indicator fail" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            <circle class="fail-circle" fill="none" stroke="#D06079" stroke-miterlimit="10" cx="50" cy="50" r="48" />
+            <line class="fail-l-line" fill="none" stroke="#D06079" stroke-miterlimit="10" x1="25" y1="25" x2="75" y2="75" />
+            <line class="fail-r-line" fill="none" stroke="#D06079" stroke-miterlimit="10" x1="75" y1="25" x2="25" y2="75" />
+        </svg>
+    </div>
+	
+
+	<script src="/lib_ams/ui-preloader.js"></script> 
+			
+
+		
+		
+<!-- ====[ Loading indicator ]======================== -->
+<!--
+<style>
+#apiProgress {
+  width: 100%;
+  background-color: #ddd;  
+}
+
+#apiBar {
+  width: 1%;
+  height: 30px;
+  background-color: #4DBF10;
+   z-index: 100;
+}
+</style>
+
+
+ <div id="apiBar"></div>	
+
+<style>
+	body {    overflow:hidden;		}
+	#loading {   width: 100%;   height: 100%;   top: 0;   left: 0;   position: fixed;   display: block;   background-color: #ababab;   z-index: 99;	}
+</style>
+ -->
+<script>
+    $(document).on('__on_api_connected', function (o, data) {   $('#loading').hide();		 });
+</script>  
+
+<div  hidden id="apiProgress"></div> 
+
 		
 		
 		
+ <script>
+        var getSelectedRow = function (id) { return $('#' + id).DataTable().rows('.selected').data()[0] };
+</script>
 		
 		
 		
