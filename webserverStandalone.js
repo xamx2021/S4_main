@@ -312,7 +312,7 @@ function websProc_new (request, response)
 
 	if( request.method == "POST" )
 		{			
-			if( request.headers.do_logout ){		thisClient.authorization_confirmed = false;		 return sendFile('./webIncludes/webLogin.html', response);		}
+			if( request.headers.do_logout ){	console.log('user logout #141 wpProc_New');	thisClient.authorization_confirmed = false;		 return sendFile('./webIncludes/webLogin.html', response);		}
 			if( thisClient.logSw )	if( request.headers.authorization ){		thisClient.logSw = false;		return doAuth(request, response, thisClient);		}
 			if( request.headers.show_login_form ){		thisClient.authorization_confirmed = false;	thisClient.logSw = true;		return send_LoginForm(response);		}			
 		}
@@ -342,6 +342,7 @@ server.post('*', function(request, response, next)
 
 		if( request.method == "POST" ){	
 			if( request.headers.do_logout ){		
+				console.log('user logout #843');
 				thisClient.authorization_confirmed = false;		
 				return sendFile('./webIncludes/webLogin.html', response, 401);		
 			}	
@@ -425,13 +426,86 @@ var ht_update = function( din )
 
 	// Dashboard list view:
 	var shtml_s =  '';		
+	
+	
+	 // New morern Dashboard list view:
+	shtml_s +=  '       <div class="main__cards">';		
+	
+	var xi=0;
+	
 	for( var i in inc_m ) if( inc_m[i] 		&&	 inc_m[i].htmlShort	 !== undefined )	
 		{
-				 shtml_s +=  inc_m[i].module_name + ': <br>' + inc_m[i].htmlShort  +'<br><br>';
+		//	console.log(  inc_m[i].htmlShort.length   )
+			if(  inc_m[i].htmlShort   )				 
+			 // old simple: 			 shtml_s += inc_m[i].module_name + ': <br>' + inc_m[i].htmlShort  +'<br><br>';
+					 			
+		{
+					
+					 var csscode = 
+						"<style> \
+						.card"+xi+" {\
+						  background: #d1ecf1;\
+						  color: #35a4ba;\
+						  text-align: center;\
+						  padding: 25px;\
+						  border-radius: 5px;\
+						  font-size: 14px;\
+						  </style> \
+						}"
+						
+					var htmlCode =
+						"	<div class=\"charts__right__cards\">\
+							<div class=\"card"+xi+"\">\
+							<h1>Income</h1>\
+							<p>$75,300</p>\
+							</div>\
+						";
+						
+						if(inc_m[i].xType === 'Sensor')var symbol = "fa-thermometer-half";							
+						else if(inc_m[i].xType === 'RGB')var symbol = "fa-flash";						
+						else if(inc_m[i].xType === 'Switch')var symbol = "fa-superpowers";
+						else if(inc_m[i].xType === 'IRswitch')var symbol = "fa-bluetooth-b";
+						else var symbol = "fa-puzzle-piece";
+						
+						
+						if(inc_m[i].xColor) var color = inc_m[i].xColor; else var color = '0';
+									console.log(inc_m[i].xColor)			
+												
+												
+					var card = "\
+							<div class=\"card\">\
+							  <i\	class=\"fa "+symbol+" fa-2x \"		 style=\"color:"+ color +";\" aria-hidden=\"true\"\></i>\
+							  <div class=\"card_inner\">	<p class=\"text-primary-p\">"+ inc_m[i].module_name  +"</p>\
+								<!--<span class=\"font-bold text-title\">AAAAA </span>-->\
+								"+inc_m[i].htmlShort+"\
+							  </div>\
+							</div>\
+					";
+						
+ 
+					//var card = inc_m[i].htmlShort
+						
+
+					
+					
+					 // New morern:
+					 shtml_s +=  card ;//  + inc_m[i].module_name + ': <br>' + inc_m[i].htmlShort  +'<br><br>';
+					 xi++;
+				 }		 
+				 
+				 
+				 
+				 
+			//
+				
+				
 				// shtml_s +=  inc_m[i].module_name + '  ' + inc_m[i].htmlShort  +'</br>';
 				// console.log( i , inc_m[i].htmlShort  )
 		}
 		shtml_s+= '';
+		
+		shtml_s +=   '</div> ' ;
+		
 		din = din.toString().replace ('%*dashboard*%', shtml_s );		
 
 

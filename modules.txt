@@ -1,0 +1,1 @@
+npm install sqlite3 express cookie-session 	(for webserver)				ws https crypto-js kalmanjs child_process events net fs  path tree-kill 	node-pre-gyp	(for the core)

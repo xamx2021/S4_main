@@ -8,7 +8,8 @@ var vrb_dbg_console_log_1 = false;
 
 var SBCONF = require("./_config.js").SBCONF;
 var WSCONF = require("./_config.js").WSCONF;
- 
+var PLUGINS = require("./_config.js").PLUGINS.plugins;
+
 
 //==================================================================
 var EventEmitter = require('events').EventEmitter;
@@ -354,12 +355,8 @@ function serverThr(socket)
 				moduleScope.emit('on_ss_module_disconnected', socket);
 			});	
 
-	 	socket.on("data", device_proto_parser.bind(null, socket)); 
-		//	 socket.on("data", function(data){
-		//		 dev.device_proto_parser(data); 
-		//	});
- 
-		socket.on('error', function(e){ 								console.log('Warning 3511 "Socket error": ', e, arguments);		   });
+	 	socket.on("data", device_proto_parser.bind(null, socket));  
+		socket.on('error', function(e){ 								console.log('Warning 3511 "Socket error": ', e.message);		   });	//, arguments
 		socket.on('uncaughtException', function (err){	  	console.error('Exception uncaught #44157, ', err.stack);			});			
 }
  
@@ -425,6 +422,12 @@ function command2device( instance, cmd_data, cb )
 							return cb( {  error: true, cmd: cmd_data.dev_cmd, det: 'error 51178, Protocol overloaded.'});
 						}
 
+				//		if(cmd_data.dev_cmd == "config_device")
+			//			{
+			//				console.log('tx:config_device: ', cmd_index)
+			//			}
+	
+
 
 					//2. add index ant time to the packet:
 					cmd_data.cmd_index = cmd_index;									// dev_cmd & data  are  in	cmd_data
@@ -456,19 +459,26 @@ function command2device( instance, cmd_data, cb )
 
 					//4. create new element in acknowledgement  await table:
 					instance.ackArray[ cmd_index ] = {};
-					instance.ackArray[ cmd_index ].dev_cmd = cmd_data.dev_cmd;
+					instance.ackArray[ cmd_index ].dev_cmd = cmd_data.dev_cmd;			//	if(instance.remote_id === 'c59e99')	if(cmd_data.dev_cmd !== "ping") console.log('data sender ', cmd_data.dev_cmd, '   ', instance.remote_id,  '  ', cmd_index )
 					instance.ackArray[ cmd_index ].callback = cb;
 					instance.ackArray[ cmd_index ].timestamp = new Date().getTime();
 					instance.ackArray[ cmd_index ].timeout = setTimeout (function()
 							{ 
 								cb( { error:true, status: 'timeout', cmd: cmd_data.dev_cmd, cmd_index:cmd_index, det: 'error 0913448, command response timeout'});
 								delete instance.ackArray[ cmd_index ] ;
-							}, 7000);
+							}, 5000);
 			}
 		catch(e){ cb( { status: false, cmd: cmd_data.dev_cmd, cmd_index:cmd_index, det: '2718 Transport error ' + e } ); console.log(' 2718 Transport error '  + e);	}		
 }
 
 
+
+
+
+/// It is assumed that a device is ONLINE if a data was received from it. 
+/// The role-file might be missing o contain errors thus not functioning properly; in this cace a flag "rolefile_loaded_ok" should remain false.
+/// If a device, connected with MQTT, is seen as ONLINE and being reset in between PING intervals, the core wont be able identify re-connection and the initialisation command won't be send, however 
+/// that device should send PRESENCE packet which triggers 'state_change' event to provide re-initialization (device configuration).
 
 //===================================================================
 // RX: Driver protocol DECODER. Input data = JSON + callback
@@ -488,34 +498,59 @@ function device_proto_parser( instance, din )
 					{
 						for( var i in json_arr)device_proto_parser( instance, json_arr[i] );
 						return;
-					}				
-				try{	var Obj = JSON.parse(din);	}catch(e){ console.log( 'Transport error #14342, broken JSON ' + din );	return;	}
-			
-				var remote_id = Obj.remote_id;
-				if(instance.remoteAddress)var remote_ip = instance.remoteAddress;				  // If possible  get the IP address of the device from the system. If not possible,
-				else var remote_ip = Obj.remote_ip;																		// well, we obviously trust the remote side...
-				if( !instance.registered && remote_id )
-					{
-						instance.remote_ip = remote_ip;
-						instance.remote_id = remote_id;
-						instance.registered = true;
-						moduleScope.emit( 'on_ss_module_connected', instance);							// Yes, this is right. The event wil going to be picked up by Dev instance.
-						return;
 					}
 
-				if(remote_id && !moduleScope.all_infrastructure_IDs[ remote_id ])	moduleScope.all_infrastructure_IDs[ remote_id ] = false;					// At first time
-				if( Obj.RDeviceEvent  && instance.events )instance.events.emit( 'on_device_event', Obj);
-				var cmd_index = Number(Obj.cmd_index);
-			//	if( isNaN( cmd_index ) )return console.log('Warning #912300, device returns data without command IndexID');
-				if( isNaN( cmd_index ) )return ;			//	It's okay for events.
+				try{	var Obj = JSON.parse(din);	}catch(e){ console.log( 'Transport error #14342, broken JSON ' + din );		return;	}
+			
+
+				// If possible  get the IP address of the device from the system. If not possible, get it from the remote 
+				if(instance.remoteAddress)	  instance.remote_ip = instance.remoteAddress;														
+				else 										instance.remote_ip = Obj.remote_ip;
+			//	if(Obj.remote_id) 					 instance.remote_id = Obj.remote_id;
+
+			// New device descovered via S4:
+			if( !instance.remote_id )
+				{
+					instance.remote_id = Obj.remote_id;
+					//console.log("Device presence @S4: ", Obj.remote_id);
+					moduleScope.all_infrastructure_IDs[ Obj.remote_id ] =   'Discovered S4 device, not connected';
+				}
+
+			//	if(instance.remote_id  === 'd2d211')
+			//	{
+			//		console.log('ddddd');
+			//	}
+				instance.remoteConnectedLastState = instance.remoteConnected;
+				instance.remoteConnected = true;
+				if( !instance.registered )// && remote_id )
+					{
+						instance.registered = true;
+						moduleScope.emit( 'on_ss_module_connected', instance);
+					}
+
+				else	if(instance.remoteConnectedLastState != instance.remoteConnected) 	instance.events.emit('state_change', instance);	
+
+	
+				// Either device-initiated event or command return. Not both:
+				if( Obj.RDeviceEvent  && instance.events ) return instance.events.emit( 'on_device_event', Obj);
+
+				var cmd_index = Number(Obj.cmd_index);			
+				if( isNaN( cmd_index ) )return ;					// Protocol mismatch, the device returns data without command IndexID'
 				if( instance.ackArray[cmd_index] )
 					{
 						//	var top = Math.abs((new Date().getTime()) - Obj.timestamp);						
-						var top = Math.abs((new Date().getTime()) - instance.ackArray[cmd_index].timestamp);						
+						var top = Math.abs((new Date().getTime()) - instance.ackArray[cmd_index].timestamp);
 						Obj.top=top;
+
+					//	if(Obj.dev_cmd !== "ping") console.log('data tracker: ', Obj.dev_cmd, '   ',  instance.remote_id, '  ', Obj.cmd_index, '   top: ', Obj.top )
+					//	if(Obj.dev_cmd == "config_device")
+					//	{
+							//console.log('rx:config_device: ', Obj.cmd_index)
+				//			console.log('rx:config_device: ', Obj.dev_cmd, '   ',  instance.remote_id, '  ', Obj.cmd_index, '   top: ', Obj.top )
+					//	}
+
 						Obj.status = true;
 						instance.ackArray[cmd_index].callback(  Obj  );
-						instance.remoteConnected = true;				// new11.21.20						
 						clearTimeout( instance.ackArray[cmd_index].timeout );
 						delete instance.ackArray[ cmd_index ];
 					}				
@@ -533,48 +568,71 @@ class Tdev {
 			this.events = new EventEmitter();
 			this.remote_id = undefined;
 			this.remote_ip = undefined;
-			this.remoteConnected = false;			
+			this.remoteConnected = false;
+			this.remoteConnectedLastState = false;
 			this.ackArray = [];
 			this.DEVICE_MOSI = command2device.bind(null, this);
 			this.DEVICE_Stream = stream2device.bind(null, this);	
 			this.device_proto_parser = device_proto_parser.bind(null, this);	//( this, data );	
-			this.transport_sender = this.transport_sender_default = function(cmd, rcb){    if( typeof rcb === 'function')  rcb( false, 'Transport is not initialized' );   console.log( 'Transport is not initialized, cmd: ', cmd, this.remote_id  ); }
+			//this.transport_sender = this.transport_sender_default = function(cmd, rcb){    if( typeof rcb === 'function')  rcb( false, 'Transport is not initialized' );   console.log( 'Transport is not initialized, cmd: ', cmd, this.remote_id  ); }
+			this.transport_sender = this.transport_sender_default = function(cmd, rcb){    if( typeof rcb === 'function')  rcb( false );  }
 
-			moduleScope.on('on_ss_module_connected', function(socket)
-			{
-				if( socket.remote_id && (socket.remote_id !== this.remote_id) )return;		// If id matches
-				moduleScope.all_infrastructure_IDs[ socket.remote_id ] = true;				  // Second set TRUE for registered devices
-				this.socket = socket;																					 // Used in streaming.
-				socket.events = this.events;																		// Used in S4 protocol.
-				this.remoteConnected = true;	
-				if(socket.transport_sender) this.transport_sender = socket.transport_sender;
-				if(socket.transport_initialized) this.transport_initialized = true;
-				socket.ackArray = this.ackArray;
-				this.remote_ip = socket.remote_ip;
+
+			moduleScope.on('on_ss_module_connected', function(instance)
+			{		
+				if( instance.remote_id && (instance.remote_id !== this.remote_id) )return;		// If id matches
+				//console.log('module connected: ',  instance.remote_id )
+
+
+
+				
+				var module_name = undefined;
+
+				for(var i in PLUGINS)if(PLUGINS[i].connected_to === instance.remote_id) { module_name = PLUGINS[i].name; break;}
+
+
+				if(module_name){
+						if(instance.remote_ip)	  console.log('Device connected: ' + instance.remote_id + ',  '+ instance.remote_ip + ' is ' + module_name );		
+						else 								console.log('Device connected: ' + instance.remote_id + ', ( unknown IP ) is ' + module_name );		
+					}
+				else
+				console.log('Device connected: ',  instance.remote_id)
+
+			//	if(this.remoteConnected == true )return;				// prevent firing double events
+
+			this.remoteConnected = true;
+
+				moduleScope.all_infrastructure_IDs[ instance.remote_id ] = true;				  // Second set TRUE for registered devices
+				this.socket = instance;																					 // Used in streaming.
+				instance.events = this.events;																		// Used in S4 protocol.
+				if(instance.transport_sender) this.transport_sender = instance.transport_sender;
+				if(instance.transport_initialized) this.transport_initialized = true;
+				instance.ackArray = this.ackArray;
+				this.remote_ip = instance.remote_ip;
 				this.events.emit('device_connected', this);
 				this.events.emit('state_change', this);				
 				this.events.emit('online', this);
-				clearCmdTimeouts();
-				
+				clearCmdTimeouts();				
 				//console.log('Device connected: ' + this.remote_id + ' @ '+ this.remote_ip + ' as ' + exemplar.prototype.module_name );
-
 			}.bind(this));
 	
+
+
 			moduleScope.on('on_ss_module_disconnected', function(socket)
 			{
-	return;		
-/// A014! Devel
-
-				if( socket.remote_id && (socket.remote_id !== this.remote_id) )return;
-				clearCmdTimeouts();
+				if( socket.remote_id && (socket.remote_id !== this.remote_id) )return;		// If id matches
 				if(this.remoteConnected == false )return;				// prevent firing double events
+				console.log('device went offline, LWT, ',  socket.remote_id )
 				this.remoteConnected = false;
-				this.transport_sender = this.transport_sender_default;
 				this.events.emit('state_change', this);
-				this.events.emit('offline', this);
+				//this.events.emit('offline', this);
+				//this.transport_sender = this.transport_sender_default;
+				//	clearCmdTimeouts();
 			}.bind(this));
 
 			
+
+
 
 			var clearCmdTimeouts = function(cmd)
 			{
@@ -584,13 +642,24 @@ class Tdev {
 				}
 			}.bind(this);
 			
+
+
 			var pinger = function()
 			{
 				function PING(obj)
-					{						
-						var remoteConnectedLastState = this.remoteConnected;
-						
-						if(obj.status === 'timeout')this.remoteConnected = false; 
+					{
+						if(obj.status === 'timeout')
+							{
+								//console.log('offline by ping')
+								this.remoteConnected = false; 
+
+								if(this.remoteConnected == true)
+									{
+										this.events.emit('offline', this);
+										this.events.emit('state_change', this);	
+										clearCmdTimeouts();
+									}
+							}
 						else
 							{
 								this.remoteConnected  = true;
@@ -599,29 +668,17 @@ class Tdev {
 
 						//	Update infrastructure list:
 						if(this.useingMQTT) 			var st = "MQTT"; 											else st = "S4";
-						if(this.remoteConnected) 	 var sr =  " online, Wireless RSSI: " + this.RSSI; 	  else sr = " offline";						
+						if(this.remoteConnected) 	 var sr =  " ONLINE, Wireless RSSI: " + this.RSSI; 	  else sr = " offline";						
 						moduleScope.all_infrastructure_IDs[ this.remote_id ] = st + ',  ping:' + sr;
-
-						if(this.remoteConnected !== remoteConnectedLastState)
-							{								
-								if(this.remoteConnected){				this.events.emit('online', this);						clearCmdTimeouts(); 		 }
-								
-								else { 
-							//		this.transport_sender = this.transport_sender_default; 
-									this.remoteConnected = false;									
-									this.events.emit('offline', this);
-								}
-								this.events.emit('state_change', this);
-							}
 					}
-					
-				//	if(this.remoteConnected)
-				if( this.transport_initialized )
-						this.DEVICE_MOSI( { dev_cmd: 'ping' }, PING.bind(this));
 
+			//	if( this.transport_initialized )
+						this.DEVICE_MOSI( { dev_cmd: 'ping' }, PING.bind(this));
 						
 			}.bind(this);
-		this.remoteDevicePingInterval = setInterval(pinger,  7000);
+
+		this.remoteDevicePingInterval = setInterval(pinger,  6000);
+
 		}		// End of constructor.
 }
 
@@ -633,14 +690,17 @@ moduleScope.S4Init = function(attach_device_by_ID)
 	var dev = new Tdev();
 	dev.remote_id = attach_device_by_ID;
 	dev.useingMQTT = false;
+	moduleScope.all_infrastructure_IDs[ dev.remote_id ] = false;
 	return dev;
 }
 
 
 
 
+
 moduleScope.MQTTInit = function( cfg )
-{	
+{
+
 	if( cfg.DeviceID === undefined)return console.log( ' ERROR !!!!!!! DeviceID is not specified ');
 	if( cfg.MQTTtxTopic === undefined) cfg.MQTTtxTopic = "/topic_MOSI/" + cfg.DeviceID;
 	if( cfg.MQTTrxTopic === undefined) cfg.MQTTrxTopic = "/topic_MISO/" + cfg.DeviceID;
@@ -656,22 +716,33 @@ moduleScope.MQTTInit = function( cfg )
 
 	client.on('connect', function (packet)
 	 {
-		client.subscribe('/presence', function (err) {  });
+		client.subscribe('/presence', function (err) { 			 });
 		client.subscribe(cfg.MQTTrxTopic,{qos:1});
 	});
 
 	client.on('message', function (topic, message, packet) 
 	{
+	//	console.log('*')
+	//	if(topic == '/presence')		{		dev.device_proto_parser(  message );			this.events.emit('device_connected', this);		this.events.emit('state_change', this);		this.events.emit('online', this);		}
+	//	if(topic == '/presence')	return		dev.device_proto_parser(  message );	
+	//	if(topic == '/lwt')					moduleScope.emit( 'on_ss_module_disconnected',     {					} );
 		if(topic == '/presence')
-			{				
-				try{	var Obj = JSON.parse(message.toString());		}catch(e){ console.log( 'Transport error #14342, broken JSON ' + din );	return;	}
-				var remote_id = Obj.remote_id;
-				if(remote_id && !moduleScope.all_infrastructure_IDs[ remote_id ])	
-										moduleScope.all_infrastructure_IDs[ remote_id ] = false;					// Third add devices by ping/ If a device was connected to MQTT broker before HUB started, it wont get discovered.
-			}	
-		if(topic == dev.rxTopic)		dev.device_proto_parser(  message );			//device_proto_parser.bind(null, socket);
+			{
+					try{	
+						var Obj = JSON.parse(message);
+						//console.log("Device presence @MQTT: ", Obj.remote_id);
+						moduleScope.all_infrastructure_IDs[ Obj.remote_id ] =   'Discovered MQTT device, not connected';
+						if(topic == dev.rxTopic)return dev.device_proto_parser( message );
+					   	}catch(e){ console.log( 'Transport error #11342, broken JSON ' + message );	return;	}
+					
+			}	// To make it compatible with other 100% MQTT devices.
+		if(topic == dev.rxTopic)	dev.device_proto_parser( message );
 	});
 	
+	
+
+
+
 	var dev = new Tdev();
 	dev.useingMQTT=true;
 	dev.remote_id = cfg.DeviceID;
@@ -680,7 +751,6 @@ moduleScope.MQTTInit = function( cfg )
 	dev.transport_initialized = true;
 	dev.transport_sender = function(data, topicTX){				client.publish(dev.txTopic, data);			}
 	
-
 	dev.DEVICE_Stream =	function ( data, cmd_data, cb )
 		{
 				if(!cb) cb = function(){};
@@ -691,6 +761,8 @@ moduleScope.MQTTInit = function( cfg )
 				//	catch(e){ cb( { status: false, cmd: cmd_data.dev_cmd, cmd_index:cmd_index, det: '2718 Transport error ' + e } ); 		console.log(' 2718 Transport error '  + e);		}		
 					catch(e){ cb( { status: false, det: '2718 Transport error ' + e } ); 		console.log(' 2718 Transport error '  + e);		}		
 		}
+
+	moduleScope.all_infrastructure_IDs[ dev.remote_id ] = false;		
 	return dev;
 }
 

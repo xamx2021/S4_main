@@ -2,6 +2,7 @@
 //#!/usr/local/bin/node
 "use strict";
 
+//var Common2 = require('./S3_core/inc__common.js');
 	var sb = require('./sys_serverbox.js'); 
 	var common = {};
 	require('./sys_auth.js').init(sb, null, common);
@@ -12,14 +13,22 @@
 
 	function plg_load()
 	{
+		CONF.bus_inc = inc_m;
+
 		for( var i in CONF.plugins )
 		{							 
 			console.log('Loading plugin: ' + CONF.plugins[i].name);
-			var tmp = require( CONF.plugins[i].plugin_file )( CONF.plugins[i].name, CONF.plugins[i].connected_to, sb, CONF, inc_m.length-1, common);			
+			//try{		
+					var tmp = require( CONF.plugins[i].plugin_file )( CONF.plugins[i].name, CONF.plugins[i].connected_to, sb, CONF, inc_m.length-1, common);	
+			//	}
+			//catch(c){			console.log('Can not initialize module: "', CONF.plugins[i].plugin_file, '", ', c);		}
 			if( tmp ) inc_m.push( tmp );
 		}
-		CONF.bus_inc = inc_m;
- 		fs.writeFileSync(Temp_plugin_file_PATH, JSON.stringify(  inc_m  ) );
+		
+		//try{	
+				 fs.writeFileSync(Temp_plugin_file_PATH, JSON.stringify(  inc_m  ) );			
+		//	}
+		//catch(c){ 			console.log('Can not use module: "', CONF.plugins[i].plugin_file, '", ', c);			}
 	};
 	
 		
@@ -40,7 +49,6 @@
 	sb.on('MISO_getAdminGUIupdate', function(input)
 	{
 	});
-	
 	
 
 

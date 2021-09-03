@@ -2,96 +2,55 @@
 "use strict";
 var version = "ESP 4"
 
-  
+
+
+
 // ============== PLUGIN SECTION: ===============================================
 var PLUGINS = 	 
 	{
 		plugins:
 			[
 
-//test
-{ plugin_file: './S3_core/inc_System_setup.js', name: 'System Setup' },
-{ plugin_file: './S3_core/inc__script_launcher.js', name: 'Controls' },			
-
-
-	// ALFA			
-			
-	//		{ plugin_file: './S3_core/inc_RFID_new.js', name: 'RFID' },
-	//		{ plugin_file: './S3_core/inc_RFID_Tags.js', name: 'RFID Tags'},
-			//{ plugin_file: './S3_core/inc_RFID_map.js', name: 'RFID_map' },	
-			//{ plugin_file: './S3_core/inc_AMS_client.js', name: 'AMS Client' },
-			//{ plugin_file: './S3_core/sys_Users.js', name: 'Manage users' },			
-			//{ plugin_file: './S3_core/inc_API_devel.js', name: 'API development' },	
-			//{ plugin_file: './S3_core/inc_Demo_devel.js', name: 'Demo' },	
+	// ALFA	
 			{ plugin_file: './S3_core/inc__about.js', name: 'About' },
-			{ plugin_file: './S3_core/inc__dashboard.js', name: 'Dashboard' },
-			{ plugin_file: './S3_core/inc_System_setup.js', name: 'System Setup' },
-//			{ plugin_file: './S3_core/inc__script_launcher.js', name: 'Controls' },			
-			
+			//{ plugin_file: './S3_core/sys_Users.js', name: 'Manage users' },
+			{ plugin_file: './S3_core/inc_System_setup.js', name: 'System' },
+	//		{ plugin_file: './S3_core/inc__script_launcher.js', name: 'Controls' },
 			//{ plugin_file: './S3_core/inc_Pinger_new.js', name: 'Pinger'  },
-
-   // BETA	
-			//{ plugin_file: './S3_core/inc__automation.js', name: 'Automation' },															// debugging unit 
-//			{ plugin_file: './S3_core/inc__air_device.js', name: 'Air device1',  connected_to: 11298564 },					// debugging unit 
-	//		{ plugin_file: './S3_core/inc__air_device.js', name: 'Air device2',  connected_to: 3626680 },					// debugging unit 
-	//		{ plugin_file: './S3_core/inc__air_device.js', name: 'Air humidifier',  connected_to: 12950205 },					// new air device 
-	
-		//  { plugin_file: './S3_core/inc__PWMSwitch.js', name: 'PWMSwitch',  connected_to: 1630019 },					//  
-		//	{ plugin_file: './S3_core/inc__PWMSwitch.js', name: 'PWMSwitch',  connected_to: 1060607 },					//  
-		//	{ plugin_file: './S3_core/inc__PWMSwitch.js', name: 'PWMSwitch',  connected_to: 3626680 },					//  
-	//		{ plugin_file: './S3_core/inc__PWMSwitch.js', name: 'PWMSwitch big',  connected_to: 1459620 },			  //  
-//+			{ plugin_file: './S3_core/inc__PWMSwitch.js', name: 'PWM Switch',  connected_to:  '9402dc' },					//  
-	
-//+			{ plugin_file: './S3_core/inc__air_device.js', name: 'Air humidifier',  connected_to: 'c59abd' },					// real new  air device
+			{ plugin_file: './S3_core/inc__dashboard.js', name: 'Dashboard' },
 
 
-			//{ plugin_file: './S3_core/inc__voc_ctrl_new.js', name: 'Voc Controller',  connected_to: 1397603 },			// debugging unit
-			//{ plugin_file: './S3_core/inc__remote_ctrl.js', name: 'Remote controller',  connected_to: 1397603 },			// debugging unit	
+
+   // BETA			 
+			{ plugin_file: './S3_core/inc__air_humobarothermometer.js', name: 'Indoor air', connected_to: 'c59e99' },	// Prprotype1, New PCB		
+			{ plugin_file: './S3_core/inc__air_humobarothermometer.js', name: 'Outdoor air', connected_to: 'dbd3a1' },	// Prprotype0, Old PCB
+	//		{ plugin_file: './S3_core/inc__logger.js', name: 'Logger',  connected_to:   '3756b8' },					  // logger
+	//		{ plugin_file: './S3_core/inc__loggerDB.js', name: 'DLogger', connected_to: 'no_hardware' },		 	// logger db
+
+			{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Switch1',  connected_to: 'd2d211' },
+			{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Switch2',  connected_to: 'a55dfb' },
+			{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Switch3',  connected_to: '8e88b2' },
 			
-			//{ plugin_file: './S3_core/inc__air_humobarothermometer.js', name: 'Air multimeter', connected_to: 'c59e99' },	// Prprotype1
-		//	{ plugin_file: './plugin_modules/air_humothermometer/SSC/inc__air_humobarothermometer.js', name: 'Air multimeter', connected_to: 'dbd3a1' },	// Prprotype2, New PCB		
-			{ plugin_file: './S3_core/inc__air_humobarothermometer.js', name: 'Air multimeter', connected_to: 'c59e99' },	// Prprotype1, New PCB		
-		//	{ plugin_file: './S3_core/inc__air_humobarothermometer.js', name: 'Air multimeter', connected_to: 'dbd3a1' },	// Prprotype2, New PCB		
+		//	{ plugin_file: './S3_core/inc__OneSwitch.js', name: '3-bulb lamp', connected_to: '946403' },
+			{ plugin_file: './S3_core/inc__rgb_2812.js', name: 'LED lamp1',  connected_to: '63cb40' },
+			{ plugin_file: './S3_core/inc__rgb_2812.js', name: 'LED lamp2',  connected_to: 'a83353', useMQTT:true },	
+
+			{ plugin_file: './S3_core/inc__IRSwitch.js', name: 'IR control',  connected_to: '18a361' },
+
+	// LOGIC
+			{ plugin_file: './S3_core/inc__event.js', name: 'EVT' },
+			{ plugin_file: './S3_core/inc__timer.js', name: 'TMR'},
+	//		{ plugin_file: './S3_core/inc__codes.js', name: 'CDE' , connected_to: 'codeGrp' },
 
 
-//			{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'devel. SW',  connected_to: 'dbd3a1' },			  
-//			{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Switch1. SW',  connected_to: 'd2d211' },
-//			{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Switch2. SW',  connected_to: '8e88b2' },
-			{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Humidif. SW',  connected_to: 'a55dfb' },
-//			{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Chinese lantern', connected_to:       '946403' },
-//			{ plugin_file: './S3_core/inc__rgb_2812.js', name: ' LED Lamp',  connected_to: '8f2dd0' },
+   // GAMMA
+ 			//{ plugin_file: './S3_core/inc__PWMSwitch.js', name: 'PWM Switch',  connected_to:  '9402dc' },
+		//	{ plugin_file: './S3_core/inc__air_device.js', name: 'Humidifier',  connected_to: 'c59abd' },	
+			//{ plugin_file: './S3_core/inc__voc_ctrl_new.js', name: 'Voc Controller' },			// debugging unit	
+ 			//{ plugin_file: './S3_core/inc__rgb_audio.js', name: 'RGB-audio', connected_to: 9341106 },
 
-			// ToDo:
-				// Electromagnetic field intensity  - for air multimeter (i2c bus)  [ not so much useful, big, not cheap]
-				//  Noise meter (infra - aud - ultra)		- for air multimeter	(i2c bus)			[very useful and inexpencive]
-				//  "Unknown value" sensor		- for air multimeter	( i2c bus)									[not useful at all, however, very neardish]
-				//  Gamma ray counter			- for air multimeter (partially implemented on main MCU)		[for solar activity monitor] separate unit connected to air multimeter. it is big and reativly expencive
-				// light detector - rough measuring with a photoresistor and MCUs ADC
-
-			 	
-				// RFID pod
-				// IR remote control (with learning)
-				 
-	 		
-	//		{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'UV Lamp ', connected_to:        10837499 },
-	//		{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Ventilation 1', connected_to:      13816337 },
-	//		{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Ventilation 2', connected_to:      9341106 },
-	//		{ plugin_file: './S3_core/inc__OneSwitch.js', name: 'Desk lamp', connected_to:  9374638 },	
-//	 		{ plugin_file: './S3_core/inc__rgb_2812.js', name: 'RGB',  connected_to: 9383376 },
-	//		{ plugin_file: './S3_core/inc__rgb_2812.js', name: 'RGB Rock',  connected_to: 6687280 },			
-		//  { plugin_file: './S3_core/inc__rgb_audio.js', name: 'RGB-audio', connected_to: 9341106 },
-		//  { plugin_file: './S3_core/inc__rgb_audio.js', name: 'RGB-audio', connected_to: 6687280 },
-		//  { plugin_file: './S3_core/inc__rgb_audio.js', name: 'RGB-audio-big', connected_to: 9383376 },
-
-			
-				
-		
-	// GAMMA
-		//	{ plugin_file: './S3_core/inc_F-meter_stepper.js', name: 'RFID Field measurments' },		
-		//	{ plugin_file: './S3_core/inc_N-meter_ГКЧ.js', name: 'HackRF Sweep generator' },
-		//	{ plugin_file: './S3_core/inc_RFgenerator.js', name: 'HackRF generator' },			
-		//	{ plugin_file: './S3_core/inc_RFID_Setup.js', name: 'RFID Setup' },
-		//	{ plugin_file: './S3_core/inc_RFID_Tags.js', name: 'RFID Tags'},				
+	
+	// DELTA			
 		//	{ plugin_file: './S3_core/inc_F-users.js', name: 'User Setup' },
 		//	{ plugin_file: './S3_core/inc__relayX4.js', name: 'Four relays', connected_to: 	3626667 },	
 		//	{ plugin_file: './S3_core/inc__semaphore.js', name: 'Semaphore', connected_to: 426465 },		
@@ -99,7 +58,7 @@ var PLUGINS =
 		//	{ plugin_file: './S3_core/inc0_VoCom.js', name: 'Voice command module' },
 		//	{ plugin_file: './S3_core/inc_pwm', name: 'PWM', connected_to: 426465 },
 		//	{ plugin_file: './S3_core/inc_i2c_tunnel.js', name: 'i2c tunnel', connected_to: 1614689 },
-
+		
 			],
 	}
 	
@@ -125,8 +84,10 @@ var SBCONF =
 
 var WSCONF = 
 {	
-	serverip: '127.0.0.1', 
-	serverWebSockport:7000, 
+	//serverip: '127.0.0.1', 
+	serverip: '0.0.0.0', 
+	//serverip: '10.8.0.10', 
+	serverWebSockport:9000, 
 	serverHTTPwebport: 80,
 	serverHTTPSwebport: 443,
 	sslKey: 'ssl/amx.S4.key',
@@ -165,4 +126,12 @@ moduleScope.db_log = '/boot/_config.db';								// linux
 
 moduleScope.cookieSession_secret  = '1234567890';
 
+
+
+moduleScope.MQTT_server = "mqtt://192.168.33.52";
+moduleScope.MQTT_login = "user";
+moduleScope.MQTT_password = "password";
+
+
 module.exports = moduleScope;
+
